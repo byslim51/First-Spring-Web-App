@@ -21,6 +21,13 @@ public class UserController {
         users.remove(id);
     }
 
+    private void recalculateIds() {
+        // Переназначаем ID существующих пользователей
+        for (int i = 0; i < users.size(); i++) {
+            users.get(i).setId(i + 1);
+        }
+    }
+
     @GetMapping("/one")
     public String getUser(Model model) {
         return "user";
@@ -28,7 +35,12 @@ public class UserController {
 
     @PostMapping("/createExample")
     public void postCreateExample(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        id++;
+
+        if (users.isEmpty()) {
+            id = 1;
+        } else {
+            id = users.size() + 1;
+        }
         users.add(new User(id, "Example"));
         response.sendRedirect("http://localhost:8080/user/list");
     }
@@ -38,12 +50,14 @@ public class UserController {
         String str = request.getParameter("name");
         id++;
         users.add(new User(id, str));
+
         response.sendRedirect("http://localhost:8080/user/list");
     }
 
     @GetMapping("/list")
     public String getUsers(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
         model.addAttribute("users", users);
+        recalculateIds();
         return "userList";
     }
 
@@ -52,9 +66,10 @@ public class UserController {
 //        return "userList";
 //    }
     @GetMapping("/delete")
-    public String delete(Model model, HttpServletRequest request) {
+    public String delete(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserController user = new UserController();
         user.userDelete(Integer.parseInt(request.getParameter("text"))-1);
+        response.sendRedirect("http://localhost:8080/user/list");
         return "delete";
     }
 }
