@@ -28,7 +28,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/one")
+    @GetMapping("/createPage")
     public String getUser(Model model) {
         return "user";
     }
@@ -66,10 +66,9 @@ public class UserController {
 //        return "userList";
 //    }
     @GetMapping("/delete")
-    public String delete(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void delete(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserController user = new UserController();
         user.userDelete(Integer.parseInt(request.getParameter("text"))-1);
         response.sendRedirect("http://localhost:8080/user/list");
-        return "delete";
     }
 }
